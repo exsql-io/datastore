@@ -33,7 +33,7 @@ private[codegen] object ByteGraphRowCodeGenReaderHelper {
     val instance: ByteGraphReader = synchronized {
       val classLoader = ByteGraphCodeGenClassLoaderHelper(mod).getClassLoader
       classLoader.tryLoadClass(s"${ByteGraphCodeGenClassLoaderHelper.PackageName}.$parserClassName") match {
-        case Some(existing) => existing.newInstance().asInstanceOf[ByteGraphReader]
+        case Some(existing) => existing.getConstructor().newInstance().asInstanceOf[ByteGraphReader]
         case None =>
           val initialPosition: Int = {
             if (hasVersionMarkerFlag) 4
@@ -77,7 +77,7 @@ private[codegen] object ByteGraphRowCodeGenReaderHelper {
             }
           }
 
-          classLoader.compile(parserClassName, parserClassBody).newInstance().asInstanceOf[ByteGraphReader]
+          classLoader.compile(parserClassName, parserClassBody).getConstructor().newInstance().asInstanceOf[ByteGraphReader]
       }
     }
 
@@ -154,7 +154,7 @@ private[codegen] object ByteGraphRowCodeGenReaderHelper {
                                variableNameScope: VariableNameScope,
                                useSqlTypes: Boolean): String = {
 
-    field.byteGraphDataType.valueType match {
+    (field.byteGraphDataType.valueType: @unchecked) match {
       case ByteGraphValueType.Null => s"${variableNameScope.container}[${variableNameScope.containerIndex}] = null;"
       case ByteGraphValueType.Boolean =>
         s"""
@@ -283,7 +283,7 @@ private[codegen] object ByteGraphRowCodeGenReaderHelper {
                                    useSqlTypes: Boolean): String = {
 
     val nestedVariableNameScope = variableNameScope.child()
-    val loader = elementType match {
+    val loader = (elementType: @unchecked) match {
       case ByteGraphValueType.Boolean =>
         s"""
            |int ${variableNameScope.arrayMaxPosition} = ${variableNameScope.valuePosition} + ${variableNameScope.valueLength};

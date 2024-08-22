@@ -20,7 +20,7 @@ object ByteGraphCodeGenWriterHelper {
     val instance: ByteGraphWriter = synchronized {
       val classLoader = ByteGraphCodeGenClassLoaderHelper(mod).getClassLoader
       classLoader.tryLoadClass(s"${ByteGraphCodeGenClassLoaderHelper.PackageName}.$writerClassName") match {
-        case Some(existing) => existing.newInstance().asInstanceOf[ByteGraphWriter]
+        case Some(existing) => existing.getConstructor().newInstance().asInstanceOf[ByteGraphWriter]
         case None =>
           val fields = schema.fields.zipWithIndex.map { case (field, index) =>
             field.byteGraphDataType match {
@@ -90,7 +90,7 @@ object ByteGraphCodeGenWriterHelper {
             }
           }
 
-          classLoader.compile(writerClassName, writerClassBody).newInstance().asInstanceOf[ByteGraphWriter]
+          classLoader.compile(writerClassName, writerClassBody).getConstructor().newInstance().asInstanceOf[ByteGraphWriter]
       }
     }
 
@@ -107,7 +107,7 @@ object ByteGraphCodeGenWriterHelper {
                              objectsFieldName: String = "objects",
                              objectFieldName: String = "object"): String = {
 
-    field.byteGraphDataType.valueType match {
+    (field.byteGraphDataType.valueType: @unchecked) match {
       case ByteGraphValueType.Null => s"$offsetFieldName.writeInt(-1);"
       case ByteGraphValueType.Boolean =>
         s"""

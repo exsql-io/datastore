@@ -8,6 +8,7 @@ ThisBuild / coverageExcludedPackages := ""
 ThisBuild / coverageFailOnMinimum := true
 ThisBuild / coverageMinimumStmtTotal := 0
 ThisBuild / coverageMinimumBranchTotal := 0
+ThisBuild / scalacOptions ++= Seq("-unchecked", "-deprecation")
 
 lazy val bytegraph = (project in file("bytegraph"))
   .settings(
@@ -38,9 +39,32 @@ lazy val `bytegraph-bench` = (project in file("bytegraph/bench"))
     )
   )
 
+lazy val controller = (project in file("controller"))
+  .enablePlugins(BuildInfoPlugin)
+  .dependsOn(`bytegraph`)
+  .settings(
+    name := "controller",
+    libraryDependencies ++= Seq(
+      "com.twitter" %% "finagle-http" % "24.2.0",
+      "com.twitter" %% "finagle-http2" % "24.2.0",
+      "com.twitter" %% "finagle-stats" % "24.2.0",
+      "com.typesafe" % "config" % "1.4.3",
+      "org.apache.kafka" % "kafka-clients" % "3.6.2",
+      "org.apache.helix" % "helix-core" % "1.4.0" excludeAll ExclusionRule("org.slf4j", "slf4j-log4j12"),
+      "org.apache.helix" % "helix-rest" % "1.4.0" excludeAll ExclusionRule("org.slf4j", "slf4j-log4j12"),
+      "com.typesafe.akka" %% "akka-actor" % "2.8.6",
+      "ch.qos.logback" % "logback-classic" % "1.5.7" % Provided,
+      "org.scalatest" %% "scalatest" % "3.2.19" % Test
+    )
+  )
+  .settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "io.exsql.datastore.controller"
+  )
+
 lazy val datastore = (project in file("."))
   .dependsOn(`bytegraph`)
-  .aggregate(`bytegraph`)
+  .aggregate(`bytegraph`, `controller`)
   .settings(
     name := "datastore"
   )

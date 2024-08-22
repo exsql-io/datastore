@@ -47,7 +47,7 @@ private[bytegraph] object ByteGraphRowLookup {
            offset: Int,
            byteGraphBytes: ByteGraphBytes): ByteGraph = {
 
-    field.byteGraphDataType.valueType match {
+    (field.byteGraphDataType.valueType: @unchecked) match {
       case ByteGraphValueType.Null =>
         ByteGraphBuilderHelper.writeNull(byteGraphBytes)
         ByteGraph.valueOf(byteGraphBytes)

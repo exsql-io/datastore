@@ -29,7 +29,7 @@ object ByteGraphStructureCodeGenReaderHelper {
     val instance: ByteGraphReader = synchronized {
       val classLoader = ByteGraphCodeGenClassLoaderHelper(mod).getClassLoader
       classLoader.tryLoadClass(s"${ByteGraphCodeGenClassLoaderHelper.PackageName}.$parserClassName") match {
-        case Some(existing) => existing.newInstance().asInstanceOf[ByteGraphReader]
+        case Some(existing) => existing.getConstructor().newInstance().asInstanceOf[ByteGraphReader]
         case None =>
           val fields = readSchema.fields
           val parserClassBody =
@@ -69,7 +69,7 @@ object ByteGraphStructureCodeGenReaderHelper {
             }
           }
 
-          classLoader.compile(parserClassName, parserClassBody).newInstance().asInstanceOf[ByteGraphReader]
+          classLoader.compile(parserClassName, parserClassBody).getConstructor().newInstance().asInstanceOf[ByteGraphReader]
       }
     }
 
@@ -180,7 +180,7 @@ object ByteGraphStructureCodeGenReaderHelper {
     val valueLengthVariableName = s"${container}_valueLength"
     val fieldType = field.byteGraphDataType
 
-    fieldType.valueType match {
+    (fieldType.valueType: @unchecked) match {
       case ByteGraphValueType.Null => s"$container[$index] = null;"
       case ByteGraphValueType.Boolean =>
         s"""
@@ -315,7 +315,7 @@ object ByteGraphStructureCodeGenReaderHelper {
                                     useSqlTypes: Boolean): String = {
 
     val valueLengthVariableName = s"${container}_valueLength"
-    elements.valueType match {
+    (elements.valueType: @unchecked) match {
       case ByteGraphValueType.Null => s"$container[$index] = null;"
       case ByteGraphValueType.Boolean =>
         s"""

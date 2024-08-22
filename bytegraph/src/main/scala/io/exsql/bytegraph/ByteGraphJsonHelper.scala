@@ -11,7 +11,7 @@ import io.exsql.bytegraph.builder.{ByteGraphBuilderHelper, ByteGraphListBuilder,
 import io.exsql.bytegraph.bytes.{ByteGraphBytes, InMemoryByteGraphBytes}
 import io.exsql.bytegraph.metadata.ByteGraphSchema.{ByteGraphDataType, ByteGraphListType, ByteGraphRowType, ByteGraphSchema, ByteGraphSchemaField, ByteGraphStructureType}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Failure
 
 private[bytegraph] object ByteGraphJsonHelper {
@@ -145,7 +145,7 @@ private[bytegraph] object ByteGraphJsonHelper {
 
     val elements = byteGraphDataType.asInstanceOf[ByteGraphListType].elements
     list.asScala.foreach { any =>
-      elements.valueType match {
+      (elements.valueType: @unchecked) match {
         case ByteGraphValueType.Int => byteGraphListBuilder.appendInt(any.toInt)
         case ByteGraphValueType.Long => byteGraphListBuilder.appendLong(any.toLong)
         case ByteGraphValueType.Double => byteGraphListBuilder.appendDouble(any.toDouble)
@@ -185,7 +185,7 @@ private[bytegraph] object ByteGraphJsonHelper {
                                            byteGraphStructureBuilder: ByteGraphStructureBuilder,
                                            schema: ByteGraphStructureType): Unit = {
 
-    fieldSchema.byteGraphDataType.valueType match {
+    (fieldSchema.byteGraphDataType.valueType: @unchecked) match {
       case ByteGraphValueType.Null => byteGraphStructureBuilder.appendNull(field)
       case ByteGraphValueType.Boolean => byteGraphStructureBuilder.appendBoolean(field, value.toBoolean)
       case ByteGraphValueType.Short => byteGraphStructureBuilder.appendShort(field, value.toInt.toShort)
@@ -265,7 +265,7 @@ private[bytegraph] object ByteGraphJsonHelper {
   }
 
   private def appendByteGraph(byteGraph: ByteGraph, jsonStream: JsonStream, renderAsDocument: Boolean): Unit = {
-    byteGraph.`type`() match {
+    (byteGraph.`type`(): @unchecked) match {
       case ByteGraphValueType.Null => jsonStream.writeNull()
       case ByteGraphValueType.Boolean => jsonStream.writeVal(byteGraph.as[Boolean]())
       case ByteGraphValueType.Blob => jsonStream.writeVal(Base64.getEncoder.encodeToString(byteGraph.as[Array[Byte]]()))

@@ -35,8 +35,6 @@ import sun.misc.Unsafe;
 import java.lang.reflect.Field;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -124,28 +122,14 @@ final class UnsafeUtil {
    * Gets the {@code sun.misc.Unsafe} instance, or {@code null} if not available on this platform.
    */
   static sun.misc.Unsafe getUnsafe() {
-    sun.misc.Unsafe unsafe = null;
-    try {
-      unsafe =
-          AccessController.doPrivileged(
-                  (PrivilegedExceptionAction<Unsafe>) () -> {
-                    Class<Unsafe> k = Unsafe.class;
+      try {
+        Field f = Unsafe.class.getDeclaredField("theUnsafe");
+        f.setAccessible(true);
 
-                    for (Field f : k.getDeclaredFields()) {
-                      f.setAccessible(true);
-                      Object x = f.get(null);
-                      if (k.isInstance(x)) {
-                        return k.cast(x);
-                      }
-                    }
-                    // The sun.misc.Unsafe field does not exist.
-                    return null;
-                  });
-    } catch (Throwable e) {
-      // Catching Throwable here due to the fact that Google AppEngine raises NoClassDefFoundError
-      // for Unsafe.
-    }
-    return unsafe;
+        return (Unsafe) f.get(null);
+      } catch (final NoSuchFieldException | IllegalAccessException e) {
+          throw new RuntimeException(e);
+      }
   }
 
   /** Get a {@link MemoryAccessor} appropriate for the platform, or null if not supported. */

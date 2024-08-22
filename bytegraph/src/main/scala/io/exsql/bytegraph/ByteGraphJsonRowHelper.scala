@@ -49,7 +49,7 @@ private[bytegraph] object ByteGraphJsonRowHelper {
 
     if (value == null || value.valueType() == ValueType.NULL) byteGraphRowBuilder.appendNull()
     else {
-      fieldSchema.byteGraphDataType.valueType match {
+      (fieldSchema.byteGraphDataType.valueType: @unchecked) match {
         case ByteGraphValueType.Boolean => byteGraphRowBuilder.appendBoolean(value.toBoolean)
         case ByteGraphValueType.Short => byteGraphRowBuilder.appendShort(value.toInt.toShort)
         case ByteGraphValueType.Int => byteGraphRowBuilder.appendInt(value.toInt)
@@ -104,7 +104,7 @@ private[bytegraph] object ByteGraphJsonRowHelper {
 
     val elements = byteGraphDataType.asInstanceOf[ByteGraphListType].elements
     list.asScala.foreach { any =>
-      elements.valueType match {
+      (elements.valueType: @unchecked) match {
         case ByteGraphValueType.Int => byteGraphListBuilder.appendInt(any.toInt)
         case ByteGraphValueType.Long => byteGraphListBuilder.appendLong(any.toLong)
         case ByteGraphValueType.Double => byteGraphListBuilder.appendDouble(any.toDouble)

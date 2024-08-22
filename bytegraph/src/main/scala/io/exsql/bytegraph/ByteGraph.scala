@@ -67,7 +67,7 @@ object ByteGraph {
 
     private def fromValueType[T](valueType: ByteGraphValueType, schema: Option[ByteGraphDataType]): T = {
       val value: Any = {
-        valueType match {
+        (valueType: @unchecked) match {
           case ByteGraphValueType.Null => null
           case ByteGraphValueType.Boolean => (bytes.getByte(0) & 0x0F) == 0x01
           case ByteGraphValueType.Short => bytes.getShort(1)

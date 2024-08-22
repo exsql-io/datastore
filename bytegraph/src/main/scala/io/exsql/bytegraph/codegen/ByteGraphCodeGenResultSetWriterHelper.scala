@@ -25,7 +25,7 @@ object ByteGraphCodeGenResultSetWriterHelper {
     val instance: ByteGraphResultSetWriter = synchronized {
       val classLoader = ByteGraphCodeGenClassLoaderHelper(mod).getClassLoader
       classLoader.tryLoadClass(s"${ByteGraphCodeGenClassLoaderHelper.PackageName}.$writerClassName") match {
-        case Some(existing) => existing.newInstance().asInstanceOf[ByteGraphResultSetWriter]
+        case Some(existing) => existing.getConstructor().newInstance().asInstanceOf[ByteGraphResultSetWriter]
         case None =>
           val columnRange = 1 to resultSetMetaData.getColumnCount
           val writerClassBody =
@@ -78,7 +78,7 @@ object ByteGraphCodeGenResultSetWriterHelper {
             }
           }
 
-          classLoader.compile(writerClassName, writerClassBody).newInstance().asInstanceOf[ByteGraphResultSetWriter]
+          classLoader.compile(writerClassName, writerClassBody).getConstructor().newInstance().asInstanceOf[ByteGraphResultSetWriter]
       }
     }
 
@@ -87,7 +87,7 @@ object ByteGraphCodeGenResultSetWriterHelper {
   }
 
   def generateFieldWriterFor(index: Int, field: ByteGraphSchemaField, sqlType: Int): String = {
-    field.byteGraphDataType.valueType match {
+    (field.byteGraphDataType.valueType: @unchecked) match {
       case ByteGraphValueType.Boolean if sqlType == Types.BIT =>
         s"""
            |{
