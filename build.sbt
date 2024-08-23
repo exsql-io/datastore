@@ -53,7 +53,7 @@ lazy val controller = (project in file("controller"))
       "org.apache.helix" % "helix-core" % "1.4.0" excludeAll ExclusionRule("org.slf4j", "slf4j-log4j12"),
       "org.apache.helix" % "helix-rest" % "1.4.0" excludeAll ExclusionRule("org.slf4j", "slf4j-log4j12"),
       "com.typesafe.akka" %% "akka-actor" % "2.8.6",
-      "ch.qos.logback" % "logback-classic" % "1.5.7" % Provided,
+      "ch.qos.logback" % "logback-classic" % "1.5.7",
       "org.scalatest" %% "scalatest" % "3.2.19" % Test
     )
   )
@@ -62,9 +62,36 @@ lazy val controller = (project in file("controller"))
     buildInfoPackage := "io.exsql.datastore.controller"
   )
 
+lazy val replica = (project in file("replica"))
+  .enablePlugins(BuildInfoPlugin)
+  .dependsOn(`bytegraph`)
+  .settings(
+    name := "controller",
+    libraryDependencies ++= Seq(
+      "com.twitter" %% "finagle-http" % "24.2.0",
+      "com.twitter" %% "finagle-http2" % "24.2.0",
+      "com.twitter" %% "finagle-stats" % "24.2.0",
+      "com.typesafe" % "config" % "1.4.3",
+      "org.apache.kafka" %% "kafka-streams-scala" % "3.6.2",
+      "org.apache.kafka" % "kafka-clients" % "3.6.2",
+      "org.apache.helix" % "helix-core" % "1.4.0" excludeAll ExclusionRule("org.slf4j", "slf4j-log4j12"),
+      "com.squareup.okhttp3" % "okhttp" % "4.4.0",
+      "com.typesafe.akka" %% "akka-actor" % "2.8.6",
+      "org.rocksdb" % "rocksdbjni" % "6.6.4",
+      "com.github.pathikrit" %% "better-files" % "3.8.0",
+      "org.apache.spark" %% "spark-sql" % "3.2.0" excludeAll ExclusionRule("org.slf4j", "slf4j-log4j12"),
+      "ch.qos.logback" % "logback-classic" % "1.5.7",
+      "org.scalatest" %% "scalatest" % "3.2.19" % Test
+    )
+  )
+  .settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "io.exsql.datastore.replica"
+  )
+
 lazy val datastore = (project in file("."))
   .dependsOn(`bytegraph`)
-  .aggregate(`bytegraph`, `controller`)
+  .aggregate(`bytegraph`, `controller`, `replica`)
   .settings(
     name := "datastore"
   )

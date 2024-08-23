@@ -29,7 +29,7 @@ object Bootstrap extends App {
   logger.info(s"  id: ${server.configuration.id}")
   logger.info(s"  zookeeper connection string: ${server.configuration.zookeeperConnectionString}")
   logger.info(s"  kafka connection string: ${server.configuration.kafkaConnectionString}")
-  logger.info(s"reactive database controller is started at ${server.configuration.host}:${server.configuration.port}")
+  logger.info(s"controller is started at ${server.configuration.host}:${server.configuration.port}")
 
   Await.ready(listeningServer)
 
