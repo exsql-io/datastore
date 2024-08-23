@@ -63,7 +63,7 @@ private[spark] object ReactiveDatabaseExecutorBackend extends Logging {
         )
 
         env.rpcEnv.setupEndpoint("Executor", new CoarseGrainedExecutorBackend(
-          env.rpcEnv, driverUrl, executorId, hostname, hostname, cores, userClassPath, env, None, ResourceProfile.getOrCreateDefaultProfile(executorConf)))
+          env.rpcEnv, driverUrl, executorId, hostname, hostname, cores, env, None, ResourceProfile.getOrCreateDefaultProfile(executorConf)))
         workerUrl.foreach { url =>
           env.rpcEnv.setupEndpoint("WorkerWatcher", new WorkerWatcher(env.rpcEnv, url))
         }

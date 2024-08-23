@@ -75,11 +75,11 @@ lazy val replica = (project in file("replica"))
       "org.apache.kafka" %% "kafka-streams-scala" % "3.6.2",
       "org.apache.kafka" % "kafka-clients" % "3.6.2",
       "org.apache.helix" % "helix-core" % "1.4.0" excludeAll ExclusionRule("org.slf4j", "slf4j-log4j12"),
-      "com.squareup.okhttp3" % "okhttp" % "4.4.0",
+      "com.squareup.okhttp3" % "okhttp" % "4.12.0",
       "com.typesafe.akka" %% "akka-actor" % "2.8.6",
-      "org.rocksdb" % "rocksdbjni" % "6.6.4",
-      "com.github.pathikrit" %% "better-files" % "3.8.0",
-      "org.apache.spark" %% "spark-sql" % "3.2.0" excludeAll ExclusionRule("org.slf4j", "slf4j-log4j12"),
+      "org.rocksdb" % "rocksdbjni" % "9.5.2",
+      "com.github.pathikrit" %% "better-files" % "3.9.2",
+      "org.apache.spark" %% "spark-sql" % "3.3.4" excludeAll ExclusionRule("org.slf4j", "slf4j-log4j12"),
       "ch.qos.logback" % "logback-classic" % "1.5.7",
       "org.scalatest" %% "scalatest" % "3.2.19" % Test
     )
